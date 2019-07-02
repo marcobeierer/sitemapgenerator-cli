@@ -18,6 +18,8 @@ func main() {
 	log.SetFlags(0)
 
 	tokenPath := flag.String("tokenpath", "", "path to the token file")
+	referenceCountThreshold := flag.Int64("reference_count_threshold", -1, "With the reference count threshold you can define that images and videos that are embedded on more than the selected number of HTML pages are excluded from the sitemap.")
+
 	flag.Parse()
 
 	token, ok := readToken(*tokenPath)
@@ -33,7 +35,7 @@ func main() {
 	}
 
 	for {
-		if body, contentType, stats, limitReached, ok := doRequest(url, token); ok {
+		if body, contentType, stats, limitReached, ok := doRequest(url, token, *referenceCountThreshold); ok {
 			if contentType == "application/xml" {
 				if stats != "" {
 					log.Println(stats)
@@ -67,11 +69,12 @@ func readToken(tokenPath string) (string, bool) {
 }
 
 // returns body, contentType, stats (as unparsed json) limitReached, and bool if successful
-func doRequest(url, token string) (string, string, string, bool, bool) {
+func doRequest(url, token string, referenceCountThreshold int64) (string, string, string, bool, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
-	// TODO make max_etchers and reference count as param
-	req, err := http.NewRequest("GET", "https://api.marcobeierer.com/sitemap/v2/"+urlBase64+"?pdfs=1&origin_system=cli&max_fetchers=3&reference_count_threshold=5", nil)
+	// TODO make max_fetchers and reference count as param
+	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=3&reference_count_threshold=%d", urlBase64, referenceCountThreshold)
+	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		log.Println(err)
 		return "", "", "", false, false
