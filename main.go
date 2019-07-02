@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -60,13 +61,15 @@ func readToken(tokenPath string) (string, bool) {
 func doRequest(url, token string) (string, string, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
-	req, err := http.NewRequest("GET", "https://api.marcobeierer.com/sitemap/v2/"+urlBase64, nil)
+	// TODO make max_etchers and reference count as param
+	req, err := http.NewRequest("GET", "https://api.marcobeierer.com/sitemap/v2/"+urlBase64+"?max_fetchers=3&reference_count_threshold=5", nil)
 	if err != nil {
 		log.Println(err)
 		return "", "", false
 	}
 
 	if token != "" {
+		token = strings.TrimSuffix(token, "\n")
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
