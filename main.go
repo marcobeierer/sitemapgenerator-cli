@@ -33,7 +33,10 @@ func main() {
 	}
 
 	for {
-		if body, contentType, ok := doRequest(url, token); ok {
+		if body, contentType, limitReached, ok := doRequest(url, token); ok {
+			if limitReached {
+				log.Println("the URL limit was reached and the sitemap is probably not complete")
+			}
 			if contentType == "application/xml" {
 				fmt.Println(body)
 				return
@@ -60,14 +63,15 @@ func readToken(tokenPath string) (string, bool) {
 	return fmt.Sprintf("%s", bytes), true
 }
 
-func doRequest(url, token string) (string, string, bool) {
+// return body, contentType, limitReached, bool if successful
+func doRequest(url, token string) (string, string, bool, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
 	// TODO make max_etchers and reference count as param
 	req, err := http.NewRequest("GET", "https://api.marcobeierer.com/sitemap/v2/"+urlBase64+"?pdfs=1&origin_system=cli&max_fetchers=3&reference_count_threshold=5", nil)
 	if err != nil {
 		log.Println(err)
-		return "", "", false
+		return "", "", false, false
 	}
 
 	if token != "" {
@@ -78,22 +82,23 @@ func doRequest(url, token string) (string, string, bool) {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)
-		return "", "", false
+		return "", "", false, false
 	}
 	defer resp.Body.Close()
 
+	limitReached := resp.Header.Get("X-Limit-Reached") == "1"
+	contentType := resp.Header.Get("content-type")
+
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("got status code %d, expected 200\n", resp.StatusCode)
-		return "", "", false
+		return "", contentType, limitReached, false
 	}
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
-		return "", "", false
+		return "", contentType, limitReached, false
 	}
 
-	contentType := resp.Header.Get("content-type")
-
-	return string(bytes), contentType, true
+	return string(bytes), contentType, limitReached, true
 }
