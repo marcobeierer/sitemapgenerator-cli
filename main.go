@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+// log.Println() writes to stderr by default
+// fmt.Println() writes to stdout by default
 func main() {
 	log.SetFlags(0)
 
@@ -62,7 +64,7 @@ func doRequest(url, token string) (string, string, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
 	// TODO make max_etchers and reference count as param
-	req, err := http.NewRequest("GET", "https://api.marcobeierer.com/sitemap/v2/"+urlBase64+"?max_fetchers=3&reference_count_threshold=5", nil)
+	req, err := http.NewRequest("GET", "https://api.marcobeierer.com/sitemap/v2/"+urlBase64+"?pdfs=1&origin_system=cli&max_fetchers=3&reference_count_threshold=5", nil)
 	if err != nil {
 		log.Println(err)
 		return "", "", false
