@@ -14,6 +14,7 @@ import (
 
 // log.Println() writes to stderr by default
 // fmt.Println() writes to stdout by default
+// log.Fatal is equivalent to log.Print() followed by a call to os.Exit(1).
 func main() {
 	log.SetFlags(0)
 
@@ -24,13 +25,13 @@ func main() {
 
 	token, ok := readToken(*tokenPath)
 	if !ok {
-		log.Println("could not read token from file")
+		log.Fatalln("could not read token from file")
 		return
 	}
 
 	url := flag.Arg(0)
 	if url == "" {
-		log.Printf("usage: %s [flags] url\n", os.Args[0])
+		log.Fatalf("usage: %s [flags] url\n", os.Args[0])
 		return
 	}
 
@@ -47,7 +48,7 @@ func main() {
 				return
 			}
 		} else {
-			log.Println("request failed")
+			log.Fatalln("request failed")
 			return
 		}
 		time.Sleep(1 * time.Second)
@@ -72,7 +73,7 @@ func readToken(tokenPath string) (string, bool) {
 func doRequest(url, token string, referenceCountThreshold int64) (string, string, string, bool, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
-	// TODO make max_fetchers and reference count as param
+	// TODO max_fetchers as param
 	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=3&reference_count_threshold=%d", urlBase64, referenceCountThreshold)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
