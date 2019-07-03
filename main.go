@@ -20,7 +20,7 @@ func main() {
 
 	tokenPath := flag.String("tokenpath", "", "path to the token file")
 	referenceCountThreshold := flag.Int64("reference_count_threshold", -1, "With the reference count threshold you can define that images and videos that are embedded on more than the selected number of HTML pages are excluded from the sitemap.")
-	maxFetchers := flag.Int64("max_fetchers", 3, "Number of the maximal concurrent connections. Default is 3.")
+	maxFetchers := flag.Int64("max_fetchers", 3, "Number of the maximal concurrent connections.")
 
 	flag.Parse()
 
