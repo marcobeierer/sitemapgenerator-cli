@@ -52,7 +52,7 @@ func main() {
 			log.Fatalln("request failed")
 			return
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }
 
