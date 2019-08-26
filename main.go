@@ -55,6 +55,7 @@ func main() {
 			// do up to three retries if request fails
 			// the easiest way to simulate retries is to add an invalid port the sitemap generator API URL (api.marcobeierer.com) below
 			retries++
+			// don't `continue` because we want to sleep anyway
 		} else {
 			if retries > 0 {
 				log.Fatalln("multiple request failed, abort sitemap generation")
