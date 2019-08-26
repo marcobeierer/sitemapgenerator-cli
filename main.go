@@ -36,8 +36,11 @@ func main() {
 		return
 	}
 
+	retries := 0
 	for {
-		if body, contentType, stats, limitReached, ok := doRequest(url, token, *maxFetchers, *referenceCountThreshold); ok {
+		if body, statusCode, contentType, stats, limitReached, ok := doRequest(url, token, *maxFetchers, *referenceCountThreshold); ok {
+			retries = 0 // always reset retries count on a successfull request
+
 			if contentType == "application/xml" {
 				if stats != "" {
 					log.Println(stats)
@@ -48,8 +51,16 @@ func main() {
 				fmt.Println(body)
 				return
 			}
+		} else if statusCode == 0 && retries < 3 {
+			// do up to three retries if request fails
+			// the easiest way to simulate retries is to add an invalid port the sitemap generator API URL (api.marcobeierer.com) below
+			retries++
 		} else {
-			log.Fatalln("request failed")
+			if retries > 0 {
+				log.Fatalln("multiple request failed, abort sitemap generation")
+			} else {
+				log.Fatalln("request failed, abort sitemap generation")
+			}
 			return
 		}
 		time.Sleep(5 * time.Second)
@@ -70,16 +81,17 @@ func readToken(tokenPath string) (string, bool) {
 	return fmt.Sprintf("%s", bytes), true
 }
 
-// returns body, contentType, stats (as unparsed json) limitReached, and bool if successful
-func doRequest(url, token string, maxFetchers, referenceCountThreshold int64) (string, string, string, bool, bool) {
+// returns body, statusCode, contentType, stats (as unparsed json) limitReached, and bool if successful
+func doRequest(url, token string, maxFetchers, referenceCountThreshold int64) (string, int, string, string, bool, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
 	// TODO max_fetchers as param
 	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d", urlBase64, maxFetchers, referenceCountThreshold)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
+		// err could just be invalid method or URL parse error
 		log.Println(err)
-		return "", "", "", false, false
+		return "", -1, "", "", false, false // -1 because it doesn't make sense to retry in these cases
 	}
 
 	if token != "" {
@@ -90,7 +102,7 @@ func doRequest(url, token string, maxFetchers, referenceCountThreshold int64) (s
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)
-		return "", "", "", false, false
+		return "", 0, "", "", false, false // 0 because we may retry to connect, err could for example be `connection refused`
 	}
 	defer resp.Body.Close()
 
@@ -100,14 +112,14 @@ func doRequest(url, token string, maxFetchers, referenceCountThreshold int64) (s
 
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("got status code %d, expected 200\n", resp.StatusCode)
-		return "", contentType, stats, limitReached, false
+		return "", resp.StatusCode, contentType, stats, limitReached, false
 	}
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
-		return "", contentType, stats, limitReached, false
+		return "", resp.StatusCode, contentType, stats, limitReached, false
 	}
 
-	return string(bytes), contentType, stats, limitReached, true
+	return string(bytes), resp.StatusCode, contentType, stats, limitReached, true
 }
