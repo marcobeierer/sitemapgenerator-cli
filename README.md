@@ -23,6 +23,12 @@ The sitemap is written to the standard output. It is thus possible to redirect t
 	- Number of the maximal concurrent connections.
 - reference\_count\_threshold
 	- With the reference count threshold you can define that images and videos that are embedded on more than the selected number of HTML pages are excluded from the sitemap.
+- max\_request\_retries
+	- Number of retries for each failed request
+- request\_retry\_timeout
+	- Timeout in seconds after a failed request
+- sleep\_time
+	- Seconds between each update request
 
 ### Example
 	sitemapgenerator -tokenpath token.txt https://www.marcobeierer.com > sitemap.xml

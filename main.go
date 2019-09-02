@@ -22,6 +22,10 @@ func main() {
 	referenceCountThreshold := flag.Int64("reference_count_threshold", -1, "With the reference count threshold you can define that images and videos that are embedded on more than the selected number of HTML pages are excluded from the sitemap.")
 	maxFetchers := flag.Int64("max_fetchers", 3, "Number of the maximal concurrent connections.")
 
+	maxRequestRetries := flag.Int64("max_request_retries", 5, "Number of retries for each failed request")
+	requestRetryTimeoutInSeconds := flag.Int64("request_retry_timeout", 30, "Timeout in seconds after a failed request")
+	sleepTimeInSeconds := flag.Int64("sleep_time", 5, "Seconds between each update request")
+
 	flag.Parse()
 
 	token, ok := readToken(*tokenPath)
@@ -36,10 +40,10 @@ func main() {
 		return
 	}
 
-	retries := 0
+	retriesCount := int64(0)
 	for {
 		if body, statusCode, contentType, stats, limitReached, ok := doRequest(url, token, *maxFetchers, *referenceCountThreshold); ok {
-			retries = 0 // always reset retries count on a successfull request
+			retriesCount = 0 // always reset retries count on a successfull request
 
 			if contentType == "application/xml" {
 				if stats != "" {
@@ -51,20 +55,24 @@ func main() {
 				fmt.Println(body)
 				return
 			}
-		} else if statusCode == 0 && retries < 3 {
+		} else if statusCode == 0 && retriesCount < *maxRequestRetries {
 			// do up to three retries if request fails
 			// the easiest way to simulate retries is to add an invalid port the sitemap generator API URL (api.marcobeierer.com) below
-			retries++
+			retriesCount++
+
+			// sleep a little longer if there was an error, might be a refused connection due to too much requests in short time
+			time.Sleep(time.Duration(*requestRetryTimeoutInSeconds) * time.Second)
+
 			// don't `continue` because we want to sleep anyway
 		} else {
-			if retries > 0 {
+			if retriesCount > 0 {
 				log.Fatalln("multiple request failed, abort sitemap generation")
 			} else {
 				log.Fatalln("request failed, abort sitemap generation")
 			}
 			return
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(time.Duration(*sleepTimeInSeconds) * time.Second)
 	}
 }
 
