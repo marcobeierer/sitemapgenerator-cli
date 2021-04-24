@@ -21,6 +21,7 @@ func main() {
 	tokenPath := flag.String("tokenpath", "", "path to the token file")
 	referenceCountThreshold := flag.Int64("reference_count_threshold", -1, "With the reference count threshold you can define that images and videos that are embedded on more than the selected number of HTML pages are excluded from the sitemap.")
 	maxFetchers := flag.Int64("max_fetchers", 3, "Number of the maximal concurrent connections.")
+	enableIndexFile := flag.Bool("enable_index_file", false, "Enable generation of a sitemap index file, recommended for large websites.")
 
 	maxRequestRetries := flag.Int64("max_request_retries", 5, "Number of retries for each failed request")
 	requestRetryTimeoutInSeconds := flag.Int64("request_retry_timeout", 30, "Timeout in seconds after a failed request")
@@ -42,7 +43,7 @@ func main() {
 
 	retriesCount := int64(0)
 	for {
-		if body, statusCode, contentType, stats, limitReached, ok := doRequest(url, token, *maxFetchers, *referenceCountThreshold); ok {
+		if body, statusCode, contentType, stats, limitReached, ok := doRequest(url, token, *maxFetchers, *referenceCountThreshold, *enableIndexFile); ok {
 			retriesCount = 0 // always reset retries count on a successfull request
 
 			if contentType == "application/xml" {
@@ -93,11 +94,11 @@ func readToken(tokenPath string) (string, bool) {
 }
 
 // returns body, statusCode, contentType, stats (as unparsed json) limitReached, and bool if successful
-func doRequest(url, token string, maxFetchers, referenceCountThreshold int64) (string, int, string, string, bool, bool) {
+func doRequest(url, token string, maxFetchers, referenceCountThreshold int64, enableIndexFile bool) (string, int, string, string, bool, bool) {
 	urlBase64 := base64.URLEncoding.EncodeToString([]byte(url))
 
 	// TODO max_fetchers as param
-	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d", urlBase64, maxFetchers, referenceCountThreshold)
+	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d&enable_index_file=%t", urlBase64, maxFetchers, referenceCountThreshold, enableIndexFile)
 	//requestURL := fmt.Sprintf("http://marco-desktop:9999/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d&enable_index_file=1", urlBase64, maxFetchers, referenceCountThreshold)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
