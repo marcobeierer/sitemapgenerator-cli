@@ -54,6 +54,8 @@ func main() {
 				}
 				fmt.Println(body)
 				return
+			} else {
+				log.Println(body) // stats are just set in final request, before, stats are in body
 			}
 		} else if statusCode == 0 && retriesCount < *maxRequestRetries {
 			// do up to three retries if request fails
@@ -96,6 +98,7 @@ func doRequest(url, token string, maxFetchers, referenceCountThreshold int64) (s
 
 	// TODO max_fetchers as param
 	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d", urlBase64, maxFetchers, referenceCountThreshold)
+	//requestURL := fmt.Sprintf("http://marco-desktop:9999/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d&enable_index_file=1", urlBase64, maxFetchers, referenceCountThreshold)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		// err could just be invalid method or URL parse error

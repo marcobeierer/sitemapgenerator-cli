@@ -1,3 +1,4 @@
 *.xml
 *.txt
 ./sitemapgenerator-cli
+assets/**
