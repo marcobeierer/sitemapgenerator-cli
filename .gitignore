@@ -2,3 +2,4 @@
 *.txt
 ./sitemapgenerator-cli
 assets/**
+vendor/**
