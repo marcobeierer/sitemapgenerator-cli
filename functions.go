@@ -26,9 +26,11 @@ func readToken(tokenPath string) (string, bool) {
 	return fmt.Sprintf("%s", bytes), true
 }
 
+var endpoint = "https://api.marcobeierer.com/sitemap/v2/"
+
 // returns body, statusCode, contentType, stats (as unparsed json) limitReached, and bool if successful
 func doRequest(urlBase64, token string, maxFetchers, referenceCountThreshold int64, enableIndexFile bool) (string, int, string, string, bool, bool) {
-	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d&enable_index_file=%t", urlBase64, maxFetchers, referenceCountThreshold, enableIndexFile)
+	requestURL := fmt.Sprintf("%s%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d&enable_index_file=%t", endpoint, urlBase64, maxFetchers, referenceCountThreshold, enableIndexFile)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		// err could just be invalid method or URL parse error
@@ -68,7 +70,7 @@ func doRequest(urlBase64, token string, maxFetchers, referenceCountThreshold int
 
 // filename is sitemap.xml or sitemap.000001.xml, etc.
 func downloadFile(urlBase64, filepathx, token string) error {
-	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s/%s", urlBase64, filepath.Base(filepathx))
+	requestURL := fmt.Sprintf("%s%s/%s", endpoint, urlBase64, filepath.Base(filepathx))
 
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
@@ -106,7 +108,7 @@ func downloadFile(urlBase64, filepathx, token string) error {
 }
 
 func getStats(urlBase64, token string) (*Stats, error) {
-	requestURL := fmt.Sprintf("https://api.marcobeierer.com/sitemap/v2/%s/stats", urlBase64)
+	requestURL := fmt.Sprintf("%s%s/stats", endpoint, urlBase64)
 
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
