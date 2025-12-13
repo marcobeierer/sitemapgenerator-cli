@@ -26,8 +26,6 @@ func readToken(tokenPath string) (string, bool) {
 	return fmt.Sprintf("%s", bytes), true
 }
 
-var endpoint = "https://api.marcobeierer.com/sitemap/v2/"
-
 // returns body, statusCode, contentType, stats (as unparsed json) limitReached, and bool if successful
 func doRequest(urlBase64, token string, maxFetchers, referenceCountThreshold int64, enableIndexFile bool) (string, int, string, string, bool, bool) {
 	requestURL := fmt.Sprintf("%s%s?pdfs=1&origin_system=cli&max_fetchers=%d&reference_count_threshold=%d&enable_index_file=%t", endpoint, urlBase64, maxFetchers, referenceCountThreshold, enableIndexFile)

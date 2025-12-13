@@ -33,7 +33,7 @@ The sitemap is written to the standard output. It is thus possible to redirect t
 	- Seconds between each update request
 
 ### Example
-	sitemapgenerator -tokenpath token.txt https://www.marcobeierer.com > sitemap.xml
+	sitemapgenerator run -tokenpath token.txt https://www.marcobeierer.com > sitemap.xml
 
 ## Online Sitemap Generator
 The sitemap generator is also available as online tool on [my website](https://www.marcobeierer.com/tools/sitemap-generator).

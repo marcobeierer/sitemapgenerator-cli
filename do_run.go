@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 )
@@ -19,6 +20,9 @@ func doRun(urlBase64, token string, maxFetchers, referenceCountThreshold int64, 
 					log.Println("WARNING: the URL limit was reached and the sitemap probably is not complete")
 				}
 
+				// necessary if no token is used to output sitemap directly;
+				// if not token is used, sitemap is not saved on server for later download
+				fmt.Println(body)
 				return
 			} else {
 				log.Println(body) // stats are just set in final request, before, stats are in body
