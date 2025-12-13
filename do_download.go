@@ -19,8 +19,10 @@ func doDownload(urlBase64, token, outDir string) {
 		log.Fatalln(err)
 	}
 
-	// TODO check if outDir is absolute path (OS indepentent)
-	//		only use securejoin if relative...
+	// TODO
+	// check if outDir is absolute path (OS indepentent)
+	// only use securejoin if relative, otherwise securejoin makes it
+	// relative to currentPath...
 
 	outPath, err := securejoin.SecureJoin(currentPath, outDir)
 	if err != nil {
