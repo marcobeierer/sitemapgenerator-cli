@@ -37,6 +37,3 @@ The sitemap is written to the standard output. It is thus possible to redirect t
 
 ## Online Sitemap Generator
 The sitemap generator is also available as online tool on [my website](https://www.marcobeierer.com/tools/sitemap-generator).
-
-## Where do I get a Token?
-You can use the Sitemap Generator for websites with up to 500 URL for free. If your website has more URLs, you can [purchase a token on my website](https://www.marcobeierer.com/purchase).
