@@ -6,9 +6,11 @@ A command line interface for my XML Sitemap Generator written in Go (golang).
 
 ### From Source
 
- go get -u github.com/marcobeierer/sitemapgenerator-cli
- cd $GOPATH/github.com/marcobeierer/sitemapgenerator-cli
- go install
+```
+go get -u github.com/marcobeierer/sitemapgenerator-cli
+cd $GOPATH/github.com/marcobeierer/sitemapgenerator-cli
+go install
+```
 
 ### Precompiled
 
@@ -16,7 +18,7 @@ You can find precompiled binaries for 64 bit Linux, MacOS and Windows systems in
 
 ## Usage
 
- sitemapgenerator-cli url [flags]
+`sitemapgenerator-cli url [flags]`
 
 The sitemap is written to the standard output. It is thus possible to redirect the output directly to a file.
 
@@ -39,7 +41,7 @@ The sitemap is written to the standard output. It is thus possible to redirect t
 
 ### Example
 
- sitemapgenerator-cli run <https://www.marcobeierer.com> -tokenpath token.txt > sitemap.xml
+`sitemapgenerator-cli run <https://www.marcobeierer.com> -tokenpath token.txt > sitemap.xml`
 
 ## Online Sitemap Generator
 
