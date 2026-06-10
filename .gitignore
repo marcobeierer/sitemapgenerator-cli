@@ -1,5 +1,5 @@
 *.xml
 *.txt
-sitemapgenerator-cli
+/sitemapgenerator-cli
 assets/**
 vendor/**

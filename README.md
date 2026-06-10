@@ -77,6 +77,10 @@ Supported flags:
 
 - `-tokenpath`: path to the token file.
 
+## Agent Skill
+
+This repository includes an Agent Skills-compatible guide at `skills/sitemapgenerator-cli/SKILL.md` for agents that need to use this CLI. The skill documents command selection, safe token handling, common gotchas, and validation steps for `run`, `download`, and `stats`.
+
 ## Online Sitemap Generator
 
 The sitemap generator is also available as an online tool on [my website](https://www.marcobeierer.com/tools/sitemap-generator).
