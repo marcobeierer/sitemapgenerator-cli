@@ -3,3 +3,4 @@
 /sitemapgenerator-cli
 assets/**
 vendor/**
+.idea/**
