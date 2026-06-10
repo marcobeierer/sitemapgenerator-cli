@@ -1,48 +1,82 @@
 # Sitemap Generator CLI
 
-A command line interface for my XML Sitemap Generator written in Go (golang).
+A command line interface for my XML Sitemap Generator written in Go.
+
+The CLI sends requests to the external sitemap generator API at `https://api.marcobeierer.com/sitemap/v2/`, which crawls the URL and generates the sitemap. 
+
+It is free for sitemaps with up to 500 URLs. A token is required for larger sites and additional features such as image and video sitemap support. Tokens are available at [marcobeierer.com/purchase](https://www.marcobeierer.com/purchase).
 
 ## Installation
 
 ### From Source
 
+With Go 1.16 or newer:
+
 ```
-go get -u github.com/marcobeierer/sitemapgenerator-cli
-cd $GOPATH/github.com/marcobeierer/sitemapgenerator-cli
-go install
+go install github.com/marcobeierer/sitemapgenerator-cli@latest
+```
+
+From a local checkout:
+
+```
+go install .
 ```
 
 ### Precompiled
 
-You can find precompiled binaries for 64 bit Linux, MacOS and Windows systems in the `bin` folder of this repository.
+Precompiled binaries for 64-bit Linux, macOS, and Windows systems are available in the `bin` folder of this repository. They are named `sitemapgenerator` on Linux and macOS and `sitemapgenerator.exe` on Windows.
 
 ## Usage
 
-`sitemapgenerator-cli url [flags]`
+```
+sitemapgenerator-cli <command> <url> [flags]
+```
 
-The sitemap is written to the standard output. It is thus possible to redirect the output directly to a file.
+Supported commands are `run`, `download`, and `stats`. If you use a precompiled binary, replace `sitemapgenerator-cli` in the examples with `sitemapgenerator` or `sitemapgenerator.exe`.
 
-### Supported Flags
+### run
 
-- tokenpath
-  - Path to the token file
-- max\_fetchers
-  - Number of the maximal concurrent connections.
-- reference\_count\_threshold
-  - With the reference count threshold you can define that images and videos that are embedded on more than the selected number of HTML pages are excluded from the sitemap.
-- enable\_index\_file
-  - Enable generation of a sitemap index file, recommended for large websites.
-- max\_request\_retries
-  - Number of retries for each failed request
-- request\_retry\_timeout
-  - Timeout in seconds after a failed request
-- sleep\_time
-  - Seconds between each update request
+Starts or continues sitemap generation for the URL. The generated sitemap XML is written to standard output, so it can be redirected directly to a file.
 
-### Example
+```
+sitemapgenerator-cli run https://www.marcobeierer.com -tokenpath token.txt > sitemap.xml
+```
 
-`sitemapgenerator-cli run <https://www.marcobeierer.com> -tokenpath token.txt > sitemap.xml`
+Supported flags:
+
+- `-tokenpath`: path to the token file.
+- `-max_fetchers`: maximum number of concurrent connections. Default: `3`.
+- `-reference_count_threshold`: exclude images and videos embedded on more than this number of HTML pages. Default: `-1`.
+- `-enable_index_file`: enable generation of a sitemap index file, recommended for large websites. Default: `false`.
+- `-max_request_retries`: number of retries for each failed request. Default: `5`.
+- `-request_retry_timeout`: timeout in seconds after a failed request. Default: `30`.
+- `-sleep_time`: seconds between each update request. Default: `5`.
+
+### download
+
+Downloads a previously generated sitemap and sitemap index files for the URL to the given output directory.
+
+```
+sitemapgenerator-cli download https://www.marcobeierer.com -tokenpath token.txt -out_dir ./sitemaps
+```
+
+Supported flags:
+
+- `-tokenpath`: path to the token file.
+- `-out_dir`: output directory for downloaded sitemap files.
+
+### stats
+
+Prints sitemap generation statistics as JSON.
+
+```
+sitemapgenerator-cli stats https://www.marcobeierer.com -tokenpath token.txt
+```
+
+Supported flags:
+
+- `-tokenpath`: path to the token file.
 
 ## Online Sitemap Generator
 
-The sitemap generator is also available as online tool on [my website](https://www.marcobeierer.com/tools/sitemap-generator).
+The sitemap generator is also available as an online tool on [my website](https://www.marcobeierer.com/tools/sitemap-generator).
