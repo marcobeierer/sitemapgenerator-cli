@@ -24,7 +24,7 @@ go install .
 
 ### Precompiled
 
-Precompiled binaries for 64-bit Linux, macOS, and Windows systems are available in the `bin` folder of this repository. They are named `sitemapgenerator` on Linux and macOS and `sitemapgenerator.exe` on Windows.
+Precompiled binaries for 64-bit Linux, macOS, and Windows systems are available in the `bin` folder of this repository. They are named `sitemapgenerator-linux-amd64`, `sitemapgenerator-darwin-amd64`, and `sitemapgenerator-windows-amd64.exe`.
 
 ## Usage
 
@@ -32,7 +32,7 @@ Precompiled binaries for 64-bit Linux, macOS, and Windows systems are available 
 sitemapgenerator-cli <command> <url> [flags]
 ```
 
-Supported commands are `run`, `download`, and `stats`. If you use a precompiled binary, replace `sitemapgenerator-cli` in the examples with `sitemapgenerator` or `sitemapgenerator.exe`.
+Supported commands are `run`, `download`, and `stats`. If you use a precompiled binary, replace `sitemapgenerator-cli` in the examples with the matching binary from `bin`.
 
 ### run
 

@@ -1,6 +1,6 @@
 ---
 name: sitemapgenerator-cli
-description: Use when invoking the Sitemap Generator CLI, `sitemapgenerator-cli`, `sitemapgenerator`, or `sitemapgenerator.exe` to run crawls, download generated XML sitemap files, or inspect sitemap generation stats.
+description: Use when invoking the Sitemap Generator CLI, `sitemapgenerator-cli`, or a precompiled `sitemapgenerator-*` binary to run crawls, download generated XML sitemap files, or inspect sitemap generation stats.
 compatibility: Requires this Go CLI or a precompiled binary and network access to https://api.marcobeierer.com/sitemap/v2/.
 ---
 
@@ -18,7 +18,7 @@ Use this skill when a user asks an agent to generate, download, inspect, or trou
 3. Choose the executable:
    - From a local checkout, prefer `go run . <command> <url> [flags]`.
    - If installed from source, use `sitemapgenerator-cli <command> <url> [flags]`.
-   - If using precompiled binaries, use `bin/linux/amd64/sitemapgenerator`, `bin/darwin/amd64/sitemapgenerator`, or `bin/windows/amd64/sitemapgenerator.exe` as appropriate.
+   - If using precompiled binaries, use `bin/sitemapgenerator-linux-amd64`, `bin/sitemapgenerator-darwin-amd64`, or `bin/sitemapgenerator-windows-amd64.exe` as appropriate.
 4. Put flags after the URL. The CLI expects `<command>` first, `<url>` second, then command flags.
 5. Keep token files private. Pass token file paths with `-tokenpath`; do not print token contents.
 
